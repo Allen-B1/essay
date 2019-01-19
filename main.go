@@ -163,6 +163,8 @@ func main() {
 		tmp.Write([]byte(out))
 		tmp.Close()
 		
-		exec.Command(compile, path).Run()
+		if err := exec.Command(compile, path).Run(); err != nil {
+			os.Exit(1)
+		}
 	}
 }
