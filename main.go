@@ -125,23 +125,30 @@ int main() {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: %s [-c cc] file.txt\n", os.Args[0])		
+	}
+
 	var compile string
 	flag.StringVar(&compile, "c", "", "Compiler to use, or none to not compile")
 	flag.Parse()
 
 	if flag.NArg() != 1 {
-		fmt.Fprintf(os.Stderr, "usage: %s [-c cc] file.txt\n", os.Args[0])
+		flag.Usage()
+		os.Exit(1)
 		return
 	}
 
 	content, err := ioutil.ReadFile(flag.Arg(0))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error: " + err.Error())
+		os.Exit(1)
 		return
 	}
 	out, err := Convert(string(content))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error: " + err.Error())
+		os.Exit(1)		
 		return
 	}
 
@@ -157,6 +164,5 @@ func main() {
 		tmp.Close()
 		
 		exec.Command(compile, path).Run()
-
 	}
 }
