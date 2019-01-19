@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"regexp"
 	"os"
+	"flag"
+	"os/exec"
 )
 
 func parseLine(in string) (string, error) {
@@ -123,21 +125,38 @@ int main() {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "usage: %s file.txt\n", os.Args[0])
+	var compile string
+	flag.StringVar(&compile, "c", "", "Compiler to use, or none to not compile")
+	flag.Parse()
+
+	if flag.NArg() != 1 {
+		fmt.Fprintf(os.Stderr, "usage: %s [-c cc] file.txt\n", os.Args[0])
 		return
 	}
 
-	content, err := ioutil.ReadFile(os.Args[1])
+	content, err := ioutil.ReadFile(flag.Arg(0))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "error: " + err.Error())
 		return
 	}
 	out, err := Convert(string(content))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "error: " + err.Error())
 		return
 	}
 
-	fmt.Println(out)
+	if len(compile) == 0 {
+		fmt.Println(out)
+	} else {
+		path := os.TempDir() + "/essay.c"
+		tmp, err := os.Create(path)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: " + err.Error())
+		}
+		tmp.Write([]byte(out))
+		tmp.Close()
+		
+		exec.Command(compile, path).Run()
+
+	}
 }
