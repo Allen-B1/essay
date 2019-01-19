@@ -44,6 +44,10 @@ func parseLine(in string) (string, error) {
 					status = 1
 				}
 				out += "exit(" + strconv.Itoa(status) + ");\n"
+			case "stop":
+				out += "exit(0);\n"
+			case "read":
+				out += "getchar();\n"
 		}
 	}
 
