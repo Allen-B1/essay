@@ -35,7 +35,7 @@ func parseLine(in string) (string, error) {
 				str := regexp.MustCompile("[0-9]+").FindString(arr[1])
 				sec, err := strconv.Atoi(str)
 				if err == nil {
-					out += "sleep(" + strconv.Itoa(sec * 1000) + ");\n"
+					out += "sleep(" + strconv.Itoa(sec) + ");\n"
 				}
 			case "failing", "fail":
 				str := regexp.MustCompile("[0-9]+").FindString(arr[1])
@@ -68,6 +68,7 @@ func Convert(in string) (string, error) {
 	var name, teacher, subject, date, title string
 	var out string = `
 #include <stdio.h>
+#include <unistd.h>
 
 int main() {
 `
