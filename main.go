@@ -52,8 +52,18 @@ func parseLine(in string) (string, error) {
 
 // Converts essaylang into c
 func Convert(in string) (string, error) {
-	// TODO: Double spacing; every other line must be empty
-	lines := strings.Split(in, "\n")
+	// TODO: Double spacing; every other line must be empty	
+	rawlines := strings.Split(in, "\n")
+	var lines []string = nil
+
+	for i, rawline := range rawlines {
+		if i % 2 == 0 {
+			lines = append(lines, rawline)
+		} else if len(rawline) != 0 {
+			return "", errors.New("Document must be double spaced: content on line " + strconv.Itoa(i + 1))
+		}
+	}
+	
 	if len(lines) < 6 {
 		return "", errors.New(strconv.Itoa(len(lines)) + ": Missing " + (map[int]string{
 			0: "name",
