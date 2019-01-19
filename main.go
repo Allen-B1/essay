@@ -53,18 +53,9 @@ func parseLine(in string) (string, error) {
 // Converts essaylang into c
 func Convert(in string) (string, error) {
 	// TODO: Double spacing; every other line must be empty	
-	rawlines := strings.Split(in, "\n")
-	var lines []string = nil
-
-	for i, rawline := range rawlines {
-		if i % 2 == 0 {
-			lines = append(lines, rawline)
-		} else if len(rawline) != 0 {
-			return "", errors.New("Document must be double spaced: content on line " + strconv.Itoa(i + 1))
-		}
-	}
+	lines := strings.Split(in, "\n")
 	
-	if len(lines) < 6 {
+	if len(lines) < 13 {
 		return "", errors.New(strconv.Itoa(len(lines)) + ": Missing " + (map[int]string{
 			0: "name",
 			1: "teacher",
@@ -72,7 +63,7 @@ func Convert(in string) (string, error) {
 			3: "date",
 			4: "title",
 			5: "essay",	
-		}[len(lines)]))
+		}[(len(lines) + 1) / 2]))
 	}
 	var name, teacher, subject, date, title string
 	var out string = `
@@ -81,19 +72,26 @@ func Convert(in string) (string, error) {
 int main() {
 `
 	for i, line := range lines {
+		if i % 2 == 1 {
+			if len(line) != 0 {
+				return "", errors.New(strconv.Itoa(i + 1) + ": Essays must be double spaced")
+			}
+			continue
+		}
+	
 		if len(line) == 0 {
 			return "", errors.New(strconv.Itoa(i + 1) + ": Extraneous")
 		}
 		switch i {
 		case 0:
 			name = line
-		case 1:
-			teacher = line
 		case 2:
-			subject = line
-		case 3:
-			date = line
+			teacher = line
 		case 4:
+			subject = line
+		case 6:
+			date = line
+		case 8:
 			if line[0] != byte('\t') || line[1] != byte('\t') {
 				return "", errors.New("5: Title cannot be left-justified")
 			}
