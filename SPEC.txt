@@ -1,0 +1,13 @@
+Allen-B1
+
+You
+
+Computer Science
+
+18 Jan 2018
+
+		The Essay Programming Language
+
+	The Essay Programming Language, or EPL for short, is a procedural programming language. It is based on the earlier programming language called English. It can be used to: write simple text ("Hello"), read stuff, and wait.
+
+	The interpreter's dictionary contains many words. For example, writing is one such "word". Some other examples include: "wait", "fail", "stop", "read".
